@@ -5,6 +5,11 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     public GameObject target;
+    public GameObject mantlet;
+    public float UpperMantletLimit;
+    public float LowerMantletLimit;
+
+
     public Vector3 cameraOffset;
     public float rotationSpeedX;
     public float rotationSpeedY;
@@ -26,6 +31,22 @@ public class CameraController : MonoBehaviour
         pivot.parent = target.transform;
     }
 
+    void ClampRotation(Transform form, float upper, float lower)
+    {
+        //Manually clamping the rotation values
+        if (form.rotation.eulerAngles.x > upper && form.rotation.eulerAngles.x < 180)
+        {
+            form.rotation = Quaternion.Euler(upper, 0, 0);
+        }
+
+        if (form.rotation.eulerAngles.x > 180f && form.rotation.eulerAngles.x < 360 + lower)
+        {
+            form.rotation = Quaternion.Euler(360 + lower, 0, 0);
+        }
+
+    }
+
+
     // Update is called once per frame
     void LateUpdate()
     {
@@ -33,21 +54,16 @@ public class CameraController : MonoBehaviour
         verticalDirection = Input.GetAxis("Mouse Y") * rotationSpeedY;
         target.transform.Rotate(0, horizontalDirection, 0);
 
+
         if (isInvertedControls) pivot.Rotate(verticalDirection, 0, 0);
         else pivot.Rotate(-verticalDirection, 0, 0);
 
 
+        if (isInvertedControls) mantlet.transform.Rotate(verticalDirection, 0, 0);
+        else mantlet.transform.Rotate(-verticalDirection, 0, 0);
 
-        //Manually clamping the rotation values
-        if (pivot.rotation.eulerAngles.x > UpperViewingLimit && pivot.rotation.eulerAngles.x < 180)
-        {
-            pivot.rotation = Quaternion.Euler(UpperViewingLimit, 0, 0);
-        }
-
-        if (pivot.rotation.eulerAngles.x > 180f && pivot.rotation.eulerAngles.x < 360 + LowerViewingLimit)
-        {
-            pivot.rotation = Quaternion.Euler(360 + LowerViewingLimit, 0, 0);
-        }
+        ClampRotation(mantlet.transform, UpperMantletLimit, LowerMantletLimit);
+        ClampRotation(pivot, UpperViewingLimit, LowerViewingLimit);
 
         //Create Target Angles for the camera
         float angleY = target.transform.eulerAngles.y;

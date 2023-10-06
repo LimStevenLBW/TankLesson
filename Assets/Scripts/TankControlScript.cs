@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class TankControlScript : MonoBehaviour
 {
+    public AudioSource source;
+    public AudioClip tankFire;
+    public AudioClip tankDeath;
+    public AudioClip tankMove;
+
+
     private float rotation;
     public float rotationSpeed;
     public float speed;
@@ -14,10 +20,10 @@ public class TankControlScript : MonoBehaviour
     private Rigidbody body;
     private Vector3 direction;
 
-    public float accelerationMax;
-    public float accelerationMin;
-    private float accelerationCurrent;
-    private bool accelerationActive;
+    //public float accelerationMax;
+   // public float accelerationMin;
+   // private float accelerationCurrent;
+   // private bool accelerationActive;
 
     void Awake()
     {
@@ -27,17 +33,18 @@ public class TankControlScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        accelerationCurrent = accelerationMin;
-        accelerationActive = false;
+        //accelerationCurrent = accelerationMin;
+      //  accelerationActive = false;
         maxSpeed = speed + 10;
     }
 
     // Update is called once per frame
     void Update()
     {
-        CheckRotation();
         CheckDirection();
-        CheckAcceleration();
+        CheckRotation();
+
+        //CheckAcceleration();
         //CheckForJumping();
 
         //transform.position += direction.normalized * speed * Time.deltaTime;
@@ -45,9 +52,9 @@ public class TankControlScript : MonoBehaviour
     }
     void FixedUpdate()
     {
-        body.AddRelativeForce(direction.normalized * speed, ForceMode.Acceleration);
+        body.AddForce(direction * speed, ForceMode.Acceleration);
         body.drag = (speed / maxSpeed); //Caps the speed of the gameobject
-        body.AddRelativeForce(Vector3.down * gravityBooster);
+        body.AddForce(Vector3.down * gravityBooster);
     }
 
     public void OnTriggerEnter(Collider other)
@@ -109,17 +116,12 @@ public class TankControlScript : MonoBehaviour
         if (Input.GetKey("w") || Input.GetKey("up"))
         {
             direction = transform.forward * 1;
-            accelerationActive = true;
         }
         else if (Input.GetKey("s") || Input.GetKey("down"))
         {
             direction = transform.forward * -1;
-            accelerationActive = true;
         }
-        else
-        {
-            accelerationActive = false;
-        }
+
 
 
     }

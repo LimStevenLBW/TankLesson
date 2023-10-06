@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class TankGun : MonoBehaviour
 {
+    public AudioSource source;
+    public AudioClip tankFire;
+
+
     public Camera playerCamera;
     public GameObject projectile;
     public GameObject projectileSpawn;
@@ -18,6 +22,8 @@ public class TankGun : MonoBehaviour
     {
         if (Input.GetButtonDown("Fire1"))
         {
+            source.PlayOneShot(tankFire);
+
             GameObject ball = Instantiate(projectile, projectileSpawn.transform.position,
                                                       transform.rotation);
             ball.GetComponent<Rigidbody>().AddForce(transform.forward * launchVelocity);
